@@ -52,23 +52,23 @@ public class RuntimePermission {
     /**
      * Fill permissions to only ask If we do not call this method,
      * If not set or empty, the library will find all needed permissions to ask from manifest
-     * You can call .request(permissions) after this method if you want to give permissions in a separate method
+     * You can call .setPermissions(permissions) after this method if you want to give permissions in a separate method
      */
-    public static RuntimePermission askPermission(@Nullable final FragmentActivity activity, String... permissions) {
-        return new RuntimePermission(activity).request(permissions);
+    public static RuntimePermission newInstance(@Nullable final FragmentActivity activity, String... permissions) {
+        return new RuntimePermission(activity).setPermissions(permissions);
     }
 
     /**
      * Fill permissions to only ask If we do not call this method,
      * If not set or empty, the library will find all needed permissions to ask from manifest
-     * You can call .request(permissions) after this method if you want to give permissions in a separate method
+     * You can call .setPermissions(permissions) after this method if you want to give permissions in a separate method
      */
-    public static RuntimePermission askPermission(@Nullable final Fragment fragment, String... permissions) {
+    public static RuntimePermission newInstance(@Nullable final Fragment fragment, String... permissions) {
         @Nullable FragmentActivity activity = null;
         if (fragment != null) {
             activity = fragment.getActivity();
         }
-        return askPermission(activity).request(permissions);
+        return newInstance(activity).setPermissions(permissions);
     }
 
     /**
@@ -120,12 +120,12 @@ public class RuntimePermission {
     }
 
     /**
-     * We want to only request given permissions
+     * We want to only setPermissions given permissions
      * If we do not call this method, the library will find all needed permissions to ask from manifest
      *
      * @see android.Manifest.permission
      */
-    public RuntimePermission request(@Nullable final List<String> permissions) {
+    public RuntimePermission setPermissions(@Nullable final List<String> permissions) {
         if (permissions != null) {
             permissionsToRequest.clear();
             permissionsToRequest.addAll(permissions);
@@ -134,13 +134,13 @@ public class RuntimePermission {
     }
 
     /**
-     * We want to only request given permissions
+     * We want to only setPermissions given permissions
      *
      * @see android.Manifest.permission
      */
-    public RuntimePermission request(@Nullable final String... permissions) {
+    public RuntimePermission setPermissions(@Nullable final String... permissions) {
         if (permissions != null) {
-            return this.request(Arrays.asList(permissions));
+            return this.setPermissions(Arrays.asList(permissions));
         } else {
             return this;
         }
@@ -181,6 +181,21 @@ public class RuntimePermission {
         return this;
     }
 
+    public boolean shouldAskPermissions() {
+        final FragmentActivity activity = activityReference.get();
+        if (activity == null || activity.isFinishing()) {
+            return false;
+        }
+
+        final List<String> permissions = findNeededPermissions(activity);
+
+        if (permissions.isEmpty() || Build.VERSION.SDK_INT < Build.VERSION_CODES.M || arePermissionsAlreadyAccepted(activity, permissions)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public void ask(@Nullable ResponseCallback responseCallback) {
         onResponse(responseCallback)
                 .ask();
@@ -192,7 +207,7 @@ public class RuntimePermission {
     }
 
     /**
-     * If we request permission using .request(names), we only ask them
+     * If we setPermissions permission using .setPermissions(names), we only ask them
      * If not, this lib will search needed permissions from Manifest
      */
     private List<String> findNeededPermissions(@NonNull Context context) {

@@ -16,10 +16,6 @@ class PermissionException(val permissionResult: PermissionResult) : Exception() 
         runtimePermission = permissionResult.runtimePermission
     }
 
-    fun goToSettings() {
-        permissionResult.goToSettings()
-    }
-
     fun isAccepted(): Boolean {
         return permissionResult.isAccepted
     }
