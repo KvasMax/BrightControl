@@ -12,13 +12,11 @@ class BrightControlService : Service() {
     override fun onCreate() {
         super.onCreate()
         windowManipulator.showViews()
-        //SettingsManager.getInstance(this).addListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         windowManipulator.removeViews()
-        // SettingsManager.getInstance(this).removeListener(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

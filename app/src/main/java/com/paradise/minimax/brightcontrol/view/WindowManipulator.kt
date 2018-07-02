@@ -8,9 +8,10 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.SeekBar
+import com.paradise.minimax.brightcontrol.data.SettingsManager
 
 
-class WindowManipulator(context: Context) {
+class WindowManipulator(context: Context) : SettingsManager.Listener {
 
     private val windowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
     private val appContext = context.applicationContext
@@ -27,6 +28,9 @@ class WindowManipulator(context: Context) {
         params.x = 0
         params.y = 0
         params.width = 400
+
+        val settingsManager = SettingsManager.getInstance(appContext)
+        seekBar.alpha = settingsManager.opacity
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
@@ -53,14 +57,19 @@ class WindowManipulator(context: Context) {
 
     }
 
-    public fun showViews() {
+    fun showViews() {
         val brightness = Settings.System.getInt(appContext.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 0)
         seekBar.progress = brightness
         windowManager.addView(seekBar, params)
+        SettingsManager.getInstance(appContext).addListener(this)
     }
 
-    public fun removeViews() {
+    fun removeViews() {
+        SettingsManager.getInstance(appContext).removeListener(this)
         windowManager.removeView(seekBar)
     }
 
+    override fun onTransparencyChanged(value: Float) {
+        seekBar.alpha = value
+    }
 }

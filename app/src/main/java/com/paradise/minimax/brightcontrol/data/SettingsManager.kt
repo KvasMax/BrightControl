@@ -11,7 +11,7 @@ class SettingsManager private constructor(private val context: Context) : Shared
 
     companion object {
         val APP_PREFERENCES_NAME = "APP_SETTINGS"
-        val ATR_TRANSPARENCY = "ATR_TRANSPARENCY"
+        val ATR_OPACITY = "ATR_OPACITY"
 
         @Volatile
         private var INSTANCE: SettingsManager? = null
@@ -51,8 +51,13 @@ class SettingsManager private constructor(private val context: Context) : Shared
 
     }
 
-    fun setTransparency(value: Float) {
-        sharedPreferences.edit().putFloat(ATR_TRANSPARENCY, value).apply()
-        applyChangesToListeners({ it.onTransparencyChanged(value) })
-    }
+    var opacity: Float
+        get() {
+            return sharedPreferences.getFloat(ATR_OPACITY, 1f)
+        }
+        set(value) {
+            sharedPreferences.edit().putFloat(ATR_OPACITY, value).apply()
+            applyChangesToListeners({ it.onTransparencyChanged(value) })
+        }
+
 }
