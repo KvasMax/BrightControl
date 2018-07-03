@@ -7,7 +7,7 @@
     tools:context=".view.SettingsActivity">
 
     <SeekBar
-        android:id="@+id/transparencySeekBar"
+        android:id="@+id/opacitySeekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_normal"

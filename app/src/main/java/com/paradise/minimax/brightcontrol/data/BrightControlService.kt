@@ -1,9 +1,15 @@
 package com.paradise.minimax.brightcontrol.data
 
+import android.app.Notification
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
+import android.support.v4.app.NotificationCompat
 import com.paradise.minimax.brightcontrol.view.WindowManipulator
+
 
 class BrightControlService : Service() {
 
@@ -11,6 +17,8 @@ class BrightControlService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        val notification = getNotification(this)
+        startForeground(666, notification)
         windowManipulator.showViews()
     }
 
@@ -26,5 +34,15 @@ class BrightControlService : Service() {
 
     override fun onBind(intent: Intent): IBinder? {
         return null
+    }
+
+    fun getNotification(context: Context): Notification {
+        val builder = NotificationCompat.Builder(context, "")
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
+            builder.priority = Notification.PRIORITY_MIN
+        else
+            builder.priority = NotificationManager.IMPORTANCE_NONE
+        val notification = builder.build()
+        return notification
     }
 }

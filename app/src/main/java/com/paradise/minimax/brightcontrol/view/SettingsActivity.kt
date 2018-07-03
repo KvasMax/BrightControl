@@ -65,9 +65,9 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        transparencySeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        opacitySeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                settingsManager.setTransparency(progress.toFloat() / seekBar.max)
+                settingsManager.opacity = progress.toFloat() / seekBar.max
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {

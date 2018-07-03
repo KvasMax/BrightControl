@@ -15,19 +15,23 @@ class WindowManipulator(context: Context) : SettingsManager.Listener {
 
     private val windowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
     private val appContext = context.applicationContext
-    private val seekBar = SeekBar(appContext)
-    private val params = WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+    private val seekBar = VerticalSeekBar(appContext)
+    private val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                WindowManager.LayoutParams.TYPE_PHONE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
             PixelFormat.TRANSLUCENT)
 
     init {
         seekBar.max = 255
-        params.gravity = Gravity.START
+        params.gravity = Gravity.RIGHT or Gravity.BOTTOM
         params.x = 0
         params.y = 0
-        params.width = 400
+        params.height = 800
 
         val settingsManager = SettingsManager.getInstance(appContext)
         seekBar.alpha = settingsManager.opacity
