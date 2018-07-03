@@ -49,20 +49,10 @@ public class RuntimePermission {
         }
     }
 
-    /**
-     * Fill permissions to only ask If we do not call this method,
-     * If not set or empty, the library will find all needed permissions to ask from manifest
-     * You can call .setPermissions(permissions) after this method if you want to give permissions in a separate method
-     */
     public static RuntimePermission newInstance(@Nullable final FragmentActivity activity, String... permissions) {
         return new RuntimePermission(activity).setPermissions(permissions);
     }
 
-    /**
-     * Fill permissions to only ask If we do not call this method,
-     * If not set or empty, the library will find all needed permissions to ask from manifest
-     * You can call .setPermissions(permissions) after this method if you want to give permissions in a separate method
-     */
     public static RuntimePermission newInstance(@Nullable final Fragment fragment, String... permissions) {
         @Nullable FragmentActivity activity = null;
         if (fragment != null) {
@@ -71,10 +61,6 @@ public class RuntimePermission {
         return newInstance(activity).setPermissions(permissions);
     }
 
-    /**
-     * Just a helper methods in case the user blocks permission.
-     * It goes to your application settings page for the user to enable permission again.
-     */
     public void goToSettings() {
         final FragmentActivity fragmentActivity = this.activityReference.get();
         if (fragmentActivity != null) {
@@ -119,12 +105,6 @@ public class RuntimePermission {
         }
     }
 
-    /**
-     * We want to only setPermissions given permissions
-     * If we do not call this method, the library will find all needed permissions to ask from manifest
-     *
-     * @see android.Manifest.permission
-     */
     public RuntimePermission setPermissions(@Nullable final List<String> permissions) {
         if (permissions != null) {
             permissionsToRequest.clear();
@@ -133,11 +113,6 @@ public class RuntimePermission {
         return this;
     }
 
-    /**
-     * We want to only setPermissions given permissions
-     *
-     * @see android.Manifest.permission
-     */
     public RuntimePermission setPermissions(@Nullable final String... permissions) {
         if (permissions != null) {
             return this.setPermissions(Arrays.asList(permissions));

@@ -34,3 +34,9 @@ fun FragmentActivity.shouldAskPermissions(vararg permissions: String): Boolean {
             .setPermissions(permissions.toList())
             .shouldAskPermissions()
 }
+
+fun Fragment.shouldAskPermissions(vararg permissions: String): Boolean {
+    return RuntimePermission.newInstance(activity)
+            .setPermissions(permissions.toList())
+            .shouldAskPermissions()
+}

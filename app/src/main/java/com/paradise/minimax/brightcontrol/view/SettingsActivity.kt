@@ -20,48 +20,13 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         initListeners()
-
+        initViews()
         if (shouldAskPermissions()) {
             askPermissions()
         } else {
             launchService()
         }
 
-    }
-
-    private fun askPermissions() {
-        AlertDialog.Builder(this)
-                .setMessage("The app needs some permissions to work")
-                .setCancelable(false)
-                .setPositiveButton("Grant") { _, _ ->
-                    askPermission(acceptedBlock = {
-                        launchService()
-                    }, deniedBlock = {
-                        askPermissionsAgain()
-                    }, foreverDeniedBlock = {
-                        it.runtimePermission.goToSettings()
-                    })
-                }
-                .create().show()
-    }
-
-    private fun askPermissionsAgain() {
-        AlertDialog.Builder(this)
-                .setMessage("Please, give permissions you refused")
-                .setCancelable(false)
-                .setPositiveButton("Grant") { _, _ ->
-                    askPermission(acceptedBlock = {
-                        launchService()
-                    }, deniedBlock = {
-                        finish()
-                    }, foreverDeniedBlock = {
-                        it.runtimePermission.goToSettings()
-                    })
-                }
-                .setNegativeButton("Cancel") { _, _ ->
-                    finish()
-                }
-                .create().show()
     }
 
     private fun initListeners() {
@@ -76,6 +41,41 @@ class SettingsActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
+    }
+
+    private fun initViews() {
+        opacitySeekBar.progress = (settingsManager.opacity * 100).toInt()
+    }
+
+    private fun askPermissions() {
+        AlertDialog.Builder(this)
+                .setMessage("The app needs some permissions to work")
+                .setCancelable(false)
+                .setPositiveButton("Grant") { _, _ ->
+                    askPermission(acceptedBlock = {
+                        launchService()
+                    }, deniedBlock = {
+                        askPermissionsAgain()
+                    })
+                }
+                .create().show()
+    }
+
+    private fun askPermissionsAgain() {
+        AlertDialog.Builder(this)
+                .setMessage("Please, give permissions you refused")
+                .setCancelable(false)
+                .setPositiveButton("Grant") { _, _ ->
+                    askPermission(acceptedBlock = {
+                        launchService()
+                    }, deniedBlock = {
+                        finish()
+                    })
+                }
+                .setNegativeButton("Cancel") { _, _ ->
+                    finish()
+                }
+                .create().show()
     }
 
     private fun launchService() {
