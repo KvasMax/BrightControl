@@ -13,10 +13,15 @@ import com.paradise.minimax.brightcontrol.view.WindowManipulator
 
 class BrightControlService : Service() {
 
+    companion object {
+        var isRunning = false
+    }
+
     private val windowManipulator by lazy { WindowManipulator(this) }
 
     override fun onCreate() {
         super.onCreate()
+        isRunning = true
         val notification = getNotification(this)
         startForeground(666, notification)
         windowManipulator.showViews()
@@ -25,6 +30,7 @@ class BrightControlService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         windowManipulator.removeViews()
+        isRunning = false
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -36,13 +42,12 @@ class BrightControlService : Service() {
         return null
     }
 
-    fun getNotification(context: Context): Notification {
+    private fun getNotification(context: Context): Notification {
         val builder = NotificationCompat.Builder(context, "")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
             builder.priority = Notification.PRIORITY_MIN
         else
             builder.priority = NotificationManager.IMPORTANCE_NONE
-        val notification = builder.build()
-        return notification
+        return builder.build()
     }
 }

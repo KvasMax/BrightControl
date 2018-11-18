@@ -21,12 +21,11 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         initListeners()
         initViews()
-        if (shouldAskPermissions()) {
-            askPermissions()
-        } else {
-            launchService()
-        }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        launchSwitch.isChecked = BrightControlService.isRunning
     }
 
     private fun initListeners() {
@@ -41,10 +40,28 @@ class SettingsActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
+        launchSwitch.setOnClickListener {
+            if (launchSwitch.isChecked) {
+                checkPermissionsAndLaunchService()
+            } else {
+                terminateService()
+                launchSwitch.isChecked = false
+            }
+        }
+        startOnBootSwitch.setOnCheckedChangeListener { _, isChecked -> settingsManager.startOnBoot = isChecked }
     }
 
     private fun initViews() {
         opacitySeekBar.progress = (settingsManager.opacity * 100).toInt()
+        startOnBootSwitch.isChecked = settingsManager.startOnBoot
+    }
+
+    private fun checkPermissionsAndLaunchService() {
+        if (shouldAskPermissions()) {
+            askPermissions()
+        } else {
+            launchService()
+        }
     }
 
     private fun askPermissions() {
@@ -79,9 +96,14 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun launchService() {
-        val intent = Intent(applicationContext, BrightControlService::class.java)
+        launchSwitch.isChecked = true
+        val intent = Intent(this, BrightControlService::class.java)
         startService(intent)
     }
 
+    private fun terminateService() {
+        val intent = Intent(this, BrightControlService::class.java)
+        stopService(intent)
+    }
 
 }

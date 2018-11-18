@@ -3,17 +3,22 @@ package com.paradise.minimax.brightcontrol.view
 import android.content.Context
 import android.content.Context.WINDOW_SERVICE
 import android.graphics.PixelFormat
+import android.graphics.Point
 import android.os.Build
 import android.provider.Settings
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.SeekBar
 import com.paradise.minimax.brightcontrol.data.SettingsManager
+import kotlin.math.min
 
 
 class WindowManipulator(context: Context) : SettingsManager.Listener {
 
     private val windowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
+    private val screenSize: Point = Point().also { windowManager.defaultDisplay.getSize(it) }
+    private val statusBarHeight: Int = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+            .takeIf { it > 0 }?.let { context.resources.getDimensionPixelSize(it) } ?: 0
     private val appContext = context.applicationContext
     private val seekBar = VerticalSeekBar(appContext)
     private val params = WindowManager.LayoutParams(
@@ -31,7 +36,7 @@ class WindowManipulator(context: Context) : SettingsManager.Listener {
         params.gravity = Gravity.RIGHT or Gravity.BOTTOM
         params.x = 0
         params.y = 0
-        params.height = 800
+        params.height = min(screenSize.x, screenSize.y) - statusBarHeight
 
         val settingsManager = SettingsManager.getInstance(appContext)
         seekBar.alpha = settingsManager.opacity
@@ -49,13 +54,9 @@ class WindowManipulator(context: Context) : SettingsManager.Listener {
 
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
 
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
 
         })
 
